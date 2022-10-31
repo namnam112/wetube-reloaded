@@ -24,9 +24,11 @@ app.use(session({
 }))
 
 app.use(localsMiddleWare)
+app.use("/uploads", express.static("uploads"));
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
+
 
 const mothodlogger=(req,res,next)=>{
 

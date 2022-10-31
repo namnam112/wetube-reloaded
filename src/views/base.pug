@@ -5,7 +5,7 @@ html(lang="ko")
         link(link rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css")
     body
         haeder 
-        h1 who is sexy ? #{sexy}
+        h1 #{pageTItle}
         nav    
             ul 
                 li 
@@ -16,6 +16,8 @@ html(lang="ko")
                         li
                         a(href="/users/edit") Edit Profile
                         li
+                        a(href=`/users/${loggedInUser._id}`) My Profile
+                        li 
                         a(href="/users/logout") Log out
                         li
                         a(href="/videos/upload") Upload Video            

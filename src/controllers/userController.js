@@ -10,7 +10,7 @@ export const getJoin = (req, res) => {
   return res.render("join", { pageTitle: "Join" })
 }
 export const postJoin = async (req, res) => {
-  const { name, username, email, password, password2, location } = req.body;
+  const { name, username, email, password, password2, location,file } = req.body;
   const pageTitle = "Join";
   if (password !== password2) {
     return res.status(400).render("join", {
@@ -33,6 +33,7 @@ export const postJoin = async (req, res) => {
       password,
       location,
     });
+    
     return res.redirect("/login");
   } catch (error) {
 
@@ -41,15 +42,17 @@ export const postJoin = async (req, res) => {
       errorMessage: error._message,
     });
   }
+ 
 };
 
 export const getedit = (req, res) => {
   return res.render("edit-profile",{pageTitle : "Edit Profile"})
 }
 export const postedit = async(req, res) => {
-  const{session:{user:{_id}},body : {name,email,username,location}} = req
+  const{session:{user:{_id,avataUrl}},body : {name,email,username,location},file} = req
   
  const updateUser = await User.findByIdAndUpdate(_id,{
+    avataUrl:file? file.path : avataUrl,
     name:name,
     email:email,
     username:username,
@@ -96,14 +99,20 @@ export const logout = (req, res) => {
 export const upload = (req, res) => {
   res.send("upload")
 }
-export const see = (req, res) => {
-  res.send("see")
+export const see = async(req, res) => {
+  const {id} = req.params
+  const user = await User.findById(id)
+  if(!user){
+    return res.status(404).render("404",{pageTItle:"User not found"})
+  }
+  return res.render("users/profile",{pageTItle:user.name,user:user})
 }
 export const startGitHubLogin = (req, res) => {
   const baseUrl = "https://github.com/login/oauth/authorize"
   const config = {
-    client_Id: process.env.GH_CLIENT,
-    allow_singup: false,
+   
+    allow_singup: true,
+    client_id: process.env.GH_CLIENT,
     scope: "read:user user:email"
   }
   const params = new URLSearchParams(config).toString()
