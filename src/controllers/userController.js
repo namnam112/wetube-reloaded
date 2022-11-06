@@ -3,6 +3,7 @@ import bcrypt from "bcrypt"
 import fetch from "node-fetch";
 import morgan from "morgan";
 import User from "../models/User.js";
+import Video from "../models/Video.js";
 import session from "express-session"
 
 export const getJoin = (req, res) => {
@@ -101,10 +102,12 @@ export const upload = (req, res) => {
 }
 export const see = async(req, res) => {
   const {id} = req.params
-  const user = await User.findById(id)
+  const user = await User.findById(id).populate("videos")
+  
   if(!user){
     return res.status(404).render("404",{pageTItle:"User not found"})
   }
+  
   return res.render("users/profile",{pageTItle:user.name,user:user})
 }
 export const startGitHubLogin = (req, res) => {

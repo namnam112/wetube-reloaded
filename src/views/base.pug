@@ -1,35 +1,34 @@
 doctype html
 html(lang="ko")
     head
-        title #{pageTitle} / #{siteName}
-        link(link rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css")
+        title #{pageTitle} | #{siteName}
+        link(rel="stylesheet" href="https://unpkg.com/mvp.css")
+        link(rel="stylesheet" href="/static/css/styles.css")
     body
-        haeder 
-        h1 #{pageTItle}
-        nav    
-            ul 
-                li 
-                    
-                    li 
-                    a(href="/") home
-                    if loggedIn 
+        header
+            h1=pageTitle
+            nav
+                ul
+                    li
+                        a(href="/") Home
+                    if loggedIn
                         li
-                        a(href="/users/edit") Edit Profile
+                            a(href="/videos/upload") Upload Video
                         li
-                        a(href=`/users/${loggedInUser._id}`) My Profile
-                        li 
-                        a(href="/users/logout") Log out
+                            a(href=`/users/${loggedInUser._id}`) My Profile
                         li
-                        a(href="/videos/upload") Upload Video            
-                    else   
-                        li 
-                        a(href="/join") join
-                        li 
-                        a(href="/login") login    
-                    li 
-                    a(href="/search") search
-                         
+                            a(href="/users/edit") Edit Profile
+                        li
+                            a(href="/users/logout")  Log Out
+                    else
+                        li
+                            a(href="/join")  Join
+                        li
+                            a(href="/login")  Login                        
+                    li
+                        a(href="/search") Search
+
         main
             block content
-    include partials/footer.pug
-    
+            include partials/footer
+            script(src="/static/js/main.js") 
