@@ -3,7 +3,7 @@ import bcrypt from "bcrypt"
 import fetch from "node-fetch";
 import morgan from "morgan";
 import User from "../models/User.js";
-import Video from "../models/Video.js";
+
 import session from "express-session"
 
 export const getJoin = (req, res) => {
@@ -94,7 +94,10 @@ export const postLogin = async (req, res) => {
   return res.redirect("/")
 }
 export const logout = (req, res) => {
-  req.session.destroy()
+  req.session.user = null;
+  res.locals.loggedInUser = req.session.user;
+  req.session.loggedIn = false;
+  req.flash("info","bye")
   return res.redirect("/")
 }
 export const upload = (req, res) => {
@@ -102,7 +105,13 @@ export const upload = (req, res) => {
 }
 export const see = async(req, res) => {
   const {id} = req.params
-  const user = await User.findById(id).populate("videos")
+  const user = await User.findById(id).populate({
+    path: "videos",
+    populate: {
+      path: "owner",
+      model: "User",
+    },
+  });
   
   if(!user){
     return res.status(404).render("404",{pageTItle:"User not found"})
@@ -151,7 +160,6 @@ export const finishGithubLogin = async (req, res) => {
     })
     
     ).json()
-    console.log(userData)
     const emailData = await (
       await fetch(`${apiUrl}/user/emails`, {
         headers: {
@@ -192,6 +200,7 @@ export const finishGithubLogin = async (req, res) => {
 }
 export const getChagePassword = (req,res,next)=>{
   if(req.session.user.socialOnly){
+    req.flash("error","Can't change passoword")
     return res.redirect("/")
   }
 return res.render("users/change-password",{pageTitle : "Change Password"})

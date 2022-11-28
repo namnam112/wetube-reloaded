@@ -10,14 +10,16 @@ export const localsMiddleWare = (req,res,next)=>{
     res.locals.siteName = "WeTube"
     res.locals.loggedInUser = req.session.user || {}
     console.log(req.session.user)
-    
+    res.header("Cross-Origin-Embedder-Policy", "require-corp");
+    res.header("Cross-Origin-Opener-Policy", "same-origin");
     next()
 }
 
 export const protectorMiddleWare=(req,res,next)=>{
     if(req.session.loggedIn){
-        next()
+       return next()
     } else{
+        req.flash("error", "Not authorized");
         return res.redirect("/login")
     }
 } 
@@ -26,6 +28,7 @@ export const publicOnlyMiddleWare=(req,res,next)=>{
     if(!req.session.loggedIn){
        return next()
     } else{
+        req.flash("error","Not authroized")
         return res.redirect("/")
     }
 } 
